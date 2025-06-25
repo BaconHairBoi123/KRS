@@ -1,0 +1,167 @@
+/* Custom CSS untuk Soft UI Dashboard KRS */
+:root {
+  --primary-gradient: linear-gradient(310deg, #7928ca 0%, #ff0080 100%);
+  --secondary-gradient: linear-gradient(310deg, #141727 0%, #3a416f 100%);
+  --info-gradient: linear-gradient(310deg, #2152ff 0%, #21d4fd 100%);
+  --success-gradient: linear-gradient(310deg, #17ad37 0%, #98ec2d 100%);
+  --warning-gradient: linear-gradient(310deg, #f53939 0%, #fbcf33 100%);
+  --dark-gradient: linear-gradient(310deg, #141727 0%, #3a416f 100%);
+}
+
+.bg-gradient-primary {
+  background: var(--primary-gradient);
+}
+
+.bg-gradient-secondary {
+  background: var(--secondary-gradient);
+}
+
+.bg-gradient-info {
+  background: var(--info-gradient);
+}
+
+.bg-gradient-success {
+  background: var(--success-gradient);
+}
+
+.bg-gradient-warning {
+  background: var(--warning-gradient);
+}
+
+.bg-gradient-dark {
+  background: var(--dark-gradient);
+}
+
+.card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
+  border: 0;
+}
+
+.card-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.btn-gradient-primary {
+  background: var(--primary-gradient);
+  border: none;
+  color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 7px -1px rgba(0, 0, 0, 0.11), 0 2px 4px -1px rgba(0, 0, 0, 0.07);
+}
+
+.btn-gradient-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-soft {
+  background: linear-gradient(127deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.8) 100%);
+  backdrop-filter: blur(42px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-link-soft {
+  border-radius: 0.5rem;
+  margin: 0.125rem 0.5rem;
+  padding: 0.65rem 1rem;
+  transition: all 0.15s ease-in;
+}
+
+.nav-link-soft:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-link-soft.active {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 4px 7px -1px rgba(0, 0, 0, 0.11);
+}
+
+.stats-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
+  border: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary-gradient);
+}
+
+.icon-shape {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+}
+
+.text-gradient-primary {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.blur-shadow-primary {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.table-soft {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-soft th {
+  background: #f8f9fa;
+  border: none;
+  padding: 1rem;
+  font-weight: 600;
+  color: #67748e;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table-soft td {
+  border: none;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.badge-soft {
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.form-control-soft {
+  border: 1px solid #d2d6da;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.15s ease-in;
+}
+
+.form-control-soft:focus {
+  border-color: #cb0c9f;
+  box-shadow: 0 0 0 2px rgba(203, 12, 159, 0.25);
+}
