@@ -1,0 +1,117 @@
+<!-- Standalone Theme Toggle Component -->
+<div class="theme-toggle-container">
+    <div class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode (Ctrl+Shift+T)">
+        <span class="theme-toggle-label">
+            <i class="fas fa-palette"></i>
+        </span>
+        <div class="theme-toggle-switch">
+            <div class="theme-toggle-slider">
+                <i class="fas fa-sun" id="lightIcon"></i>
+                <i class="fas fa-moon" id="darkIcon" style="display: none;"></i>
+            </div>
+        </div>
+        <span class="theme-toggle-label" id="themeLabel">Light</span>
+    </div>
+</div>
+
+<style>
+/* Enhanced Theme Toggle Styles */
+.theme-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.theme-toggle:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.theme-toggle-switch {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 8px;
+}
+
+[data-theme="dark"] .theme-toggle-slider {
+    transform: translateX(20px);
+}
+
+.theme-toggle-label {
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#themeLabel {
+    min-width: 35px;
+    text-align: left;
+}
+</style>
+
+<script>
+// Enhanced theme toggle with label update
+document.addEventListener('DOMContentLoaded', function() {
+    const themeLabel = document.getElementById('themeLabel');
+    
+    // Update label based on current theme
+    function updateThemeLabel() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        if (themeLabel) {
+            themeLabel.textContent = currentTheme === 'dark' ? 'Dark' : 'Light';
+        }
+    }
+    
+    // Initial label update
+    updateThemeLabel();
+    
+    // Listen for theme changes
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                updateThemeLabel();
+            }
+        });
+    });
+    
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+    });
+});
+</script>
