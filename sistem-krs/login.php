@@ -414,7 +414,7 @@ if ($_POST) {
         <div class="login-section">
             <div class="login-form-container">
                 <div class="welcome-text">
-                    <h1>WELCOME</h1>
+                    <h1>Selamat Datang</h1>
                     <p>Masuk ke Sistem Akademik</p>
                 </div>
 
@@ -455,7 +455,7 @@ if ($_POST) {
                     <p class="text-gray-600 mb-2">Belum punya akun?</p>
                     <a href="register.php">
                         <i class="fas fa-user-plus mr-2"></i>
-                        Daftar Sekarang
+                        Daftar Mahasiswa
                     </a>
                 </div>
             </div>

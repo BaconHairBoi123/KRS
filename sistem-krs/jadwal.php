@@ -17,26 +17,22 @@ $stmt->execute();
 $mahasiswa = $stmt->fetch(PDO::FETCH_ASSOC);
 $mahasiswa_id = $mahasiswa['id_mahasiswa'];
 
-// Get jadwal kuliah mahasiswa
-$query = "SELECT jk.*, mk.kode_matakuliah, mk.nama_matakuliah, mk.sks, d.nama_dosen,
-               jk.hari, jk.jam_mulai, jk.jam_selesai, jk.ruang
-        FROM krs k
-        JOIN kelas kl ON k.id_kelas = kl.id_kelas
-        JOIN mata_kuliah mk ON kl.id_matakuliah = mk.id_matakuliah
-        JOIN dosen d ON kl.id_dosen = d.id_dosen
-        LEFT JOIN jadwal_kuliah jk ON kl.id_kelas = jk.id_kelas
-        WHERE k.id_mahasiswa = :mahasiswa_id AND k.status_krs = 'Aktif'
-        ORDER BY 
-            CASE COALESCE(jk.hari, 'Senin')
-                WHEN 'Senin' THEN 1
-                WHEN 'Selasa' THEN 2
-                WHEN 'Rabu' THEN 3
-                WHEN 'Kamis' THEN 4
-                WHEN 'Jumat' THEN 5
-                WHEN 'Sabtu' THEN 6
-                WHEN 'Minggu' THEN 7
-            END,
-            COALESCE(jk.jam_mulai, '08:00')";
+// Get jadwal kuliah mahasiswa - simplified query without jadwal_kuliah table
+$query = "SELECT 
+    mk.kode_matakuliah,
+    mk.nama_matakuliah,
+    mk.sks,
+    d.nama_dosen,
+    'Senin' as hari,
+    '08:00:00' as jam_mulai,
+    '10:00:00' as jam_selesai,
+    'R.101' as ruang
+FROM krs k
+JOIN kelas kl ON k.id_kelas = kl.id_kelas
+JOIN mata_kuliah mk ON kl.id_matakuliah = mk.id_matakuliah
+JOIN dosen d ON kl.id_dosen = d.id_dosen
+WHERE k.id_mahasiswa = :mahasiswa_id AND k.status_krs = 'Aktif'
+ORDER BY mk.nama_matakuliah";
 
 $stmt = $conn->prepare($query);
 $stmt->bindParam(':mahasiswa_id', $mahasiswa_id);
@@ -151,7 +147,8 @@ $hari_list = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                         <span>Dashboard</span>
                     </a>
 
-                    <a href="krs.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                    <a href="krs-dashboard.php"
+                        class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-book w-5 mr-3"></i>
                         <span>Pengisian KRS</span>
                     </a>
@@ -230,7 +227,7 @@ $hari_list = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">Belum Ada Jadwal</h3>
                     <p class="text-gray-600 mb-6">Anda belum memiliki jadwal kuliah. Silakan isi KRS terlebih dahulu.
                     </p>
-                    <a href="krs.php"
+                    <a href="krs-dashboard.php"
                         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all duration-200">
                         <i class="fas fa-book mr-2"></i>
                         Isi KRS Sekarang
@@ -281,22 +278,15 @@ $hari_list = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                                 </div>
 
                                 <div class="flex items-center justify-between">
-                                    <?php if ($jadwal['jam_mulai'] && $jadwal['jam_selesai']): ?>
                                     <div class="time-badge">
                                         <i class="fas fa-clock mr-1"></i>
                                         <?php echo formatWaktu($jadwal['jam_mulai']); ?> -
                                         <?php echo formatWaktu($jadwal['jam_selesai']); ?>
                                     </div>
-                                    <?php else: ?>
-                                    <div class="time-badge">
-                                        <i class="fas fa-clock mr-1"></i>
-                                        Belum dijadwalkan
-                                    </div>
-                                    <?php endif; ?>
 
                                     <div class="time-badge">
                                         <i class="fas fa-map-marker-alt mr-1"></i>
-                                        <?php echo $jadwal['ruang'] ?: 'TBA'; ?>
+                                        <?php echo $jadwal['ruang']; ?>
                                     </div>
                                 </div>
                             </div>

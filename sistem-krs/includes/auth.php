@@ -55,7 +55,7 @@ class Auth {
                 return true;
             }
             
-            // Check admin table if exists (you might need to create this)
+            // Check admin table if exists
             try {
                 $query = "SELECT id_admin, username as nim, nama_admin as nama, email, password, 'admin' as role_type 
                          FROM admin WHERE username = :nim";
@@ -124,8 +124,8 @@ class Auth {
             $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
             
             // Insert directly into mahasiswa table
-            $insertQuery = "INSERT INTO mahasiswa (nim, nama, email, password, tanggal_lahir, jenis_kelamin, alamat, nomor_telepon) 
-                           VALUES (:nim, :nama, :email, :password, :tanggal_lahir, :jenis_kelamin, :alamat, :nomor_telepon)";
+            $insertQuery = "INSERT INTO mahasiswa (nim, nama, email, password, tanggal_lahir, jenis_kelamin, alamat, nomor_telepon, jurusan, program_studi, angkatan, semester_aktif, kelompok_ukt, status) 
+                           VALUES (:nim, :nama, :email, :password, :tanggal_lahir, :jenis_kelamin, :alamat, :nomor_telepon, :jurusan, :program_studi, :angkatan, :semester_aktif, :kelompok_ukt, 'aktif')";
             
             $insertStmt = $conn->prepare($insertQuery);
             
@@ -142,6 +142,11 @@ class Auth {
             $insertStmt->bindValue(':jenis_kelamin', $data['jenis_kelamin'] ?: null);
             $insertStmt->bindValue(':alamat', $data['alamat'] ?: null);
             $insertStmt->bindValue(':nomor_telepon', $data['nomor_telepon'] ?: null);
+            $insertStmt->bindValue(':jurusan', $data['jurusan']);
+            $insertStmt->bindValue(':program_studi', $data['program_studi']);
+            $insertStmt->bindValue(':angkatan', $data['angkatan'] ?: date('Y'));
+            $insertStmt->bindValue(':semester_aktif', $data['semester_aktif'] ?: 1);
+            $insertStmt->bindValue(':kelompok_ukt', $data['kelompok_ukt'] ?: 1);
             
             if (!$insertStmt->execute()) {
                 error_log("Failed to insert mahasiswa: " . implode(", ", $insertStmt->errorInfo()));
@@ -153,6 +158,48 @@ class Auth {
             
         } catch (Exception $e) {
             error_log("Registration error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function registerDosen($data) {
+        try {
+            $database = new Database();
+            $conn = $database->getConnection();
+            
+            // Check if NIDN or email already exists
+            $checkQuery = "SELECT nidn, email FROM dosen WHERE nidn = :nidn OR email = :email";
+            $checkStmt = $conn->prepare($checkQuery);
+            $checkStmt->bindValue(':nidn', $data['nidn']);
+            $checkStmt->bindValue(':email', $data['email']);
+            $checkStmt->execute();
+            
+            if ($checkStmt->fetch()) {
+                return false;
+            }
+            
+            // Hash password
+            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+            
+            // Insert new dosen
+            $insertQuery = "INSERT INTO dosen (nidn, nama_dosen, email, password, nomor_telepon, gelar, jurusan, program_studi, bidang_keahlian, status) 
+                           VALUES (:nidn, :nama_dosen, :email, :password, :nomor_telepon, :gelar, :jurusan, :program_studi, :bidang_keahlian, 'aktif')";
+            
+            $insertStmt = $conn->prepare($insertQuery);
+            $insertStmt->bindValue(':nidn', $data['nidn']);
+            $insertStmt->bindValue(':nama_dosen', $data['nama_dosen']);
+            $insertStmt->bindValue(':email', $data['email']);
+            $insertStmt->bindValue(':password', $hashedPassword);
+            $insertStmt->bindValue(':nomor_telepon', $data['nomor_telepon'] ?? null);
+            $insertStmt->bindValue(':gelar', $data['gelar'] ?? null);
+            $insertStmt->bindValue(':jurusan', $data['jurusan']);
+            $insertStmt->bindValue(':program_studi', $data['program_studi']);
+            $insertStmt->bindValue(':bidang_keahlian', $data['bidang_keahlian'] ?? null);
+            
+            return $insertStmt->execute();
+            
+        } catch (Exception $e) {
+            error_log("Dosen registration error: " . $e->getMessage());
             return false;
         }
     }

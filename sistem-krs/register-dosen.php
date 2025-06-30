@@ -10,42 +10,57 @@ $success = '';
 $error = '';
 
 if ($_POST) {
-    $auth = new Auth();
-    
-    // Validate required fields
-    $required_fields = ['nim', 'nama', 'email', 'password', 'jurusan', 'program_studi'];
-    $missing_fields = [];
-    
-    foreach ($required_fields as $field) {
-        if (empty($_POST[$field])) {
-            $missing_fields[] = $field;
-        }
-    }
-    
-    if (!empty($missing_fields)) {
-        $error = 'Harap lengkapi semua field yang wajib diisi.';
-    } else {
-        $data = [
-            'nim' => $_POST['nim'],
-            'nama' => $_POST['nama'],
-            'email' => $_POST['email'],
-            'password' => $_POST['password'],
-            'tanggal_lahir' => $_POST['tanggal_lahir'] ?? null,
-            'jenis_kelamin' => $_POST['jenis_kelamin'] ?? null,
-            'alamat' => $_POST['alamat'] ?? null,
-            'nomor_telepon' => $_POST['nomor_telepon'] ?? null,
-            'jurusan' => $_POST['jurusan'],
-            'program_studi' => $_POST['program_studi'],
-            'angkatan' => $_POST['angkatan'] ?? date('Y'),
-            'semester_aktif' => 1,
-            'kelompok_ukt' => $_POST['kelompok_ukt'] ?? 1
-        ];
+    try {
+        $database = new Database();
+        $conn = $database->getConnection();
         
-        if ($auth->register($data)) {
-            $success = 'Registrasi berhasil! Silakan login dengan akun Anda.';
-        } else {
-            $error = 'Registrasi gagal. NIM atau email mungkin sudah terdaftar.';
+        // Validate required fields
+        $required_fields = ['nidn', 'nama_dosen', 'email', 'password', 'jurusan', 'program_studi'];
+        $missing_fields = [];
+        
+        foreach ($required_fields as $field) {
+            if (empty($_POST[$field])) {
+                $missing_fields[] = $field;
+            }
         }
+        
+        if (!empty($missing_fields)) {
+            $error = 'Harap lengkapi semua field yang wajib diisi.';
+        } else {
+            // Check if NIDN or email already exists
+            $check_query = "SELECT nidn, email FROM dosen WHERE nidn = :nidn OR email = :email";
+            $check_stmt = $conn->prepare($check_query);
+            $check_stmt->bindValue(':nidn', $_POST['nidn']);
+            $check_stmt->bindValue(':email', $_POST['email']);
+            $check_stmt->execute();
+            
+            if ($check_stmt->fetch()) {
+                $error = 'NIDN atau email sudah terdaftar.';
+            } else {
+                // Insert new dosen
+                $insert_query = "INSERT INTO dosen (nidn, nama_dosen, email, password, nomor_telepon, gelar, jurusan, program_studi, bidang_keahlian) 
+                               VALUES (:nidn, :nama_dosen, :email, :password, :nomor_telepon, :gelar, :jurusan, :program_studi, :bidang_keahlian)";
+                
+                $insert_stmt = $conn->prepare($insert_query);
+                $insert_stmt->bindValue(':nidn', $_POST['nidn']);
+                $insert_stmt->bindValue(':nama_dosen', $_POST['nama_dosen']);
+                $insert_stmt->bindValue(':email', $_POST['email']);
+                $insert_stmt->bindValue(':password', password_hash($_POST['password'], PASSWORD_DEFAULT));
+                $insert_stmt->bindValue(':nomor_telepon', $_POST['nomor_telepon'] ?? null);
+                $insert_stmt->bindValue(':gelar', $_POST['gelar'] ?? null);
+                $insert_stmt->bindValue(':jurusan', $_POST['jurusan']);
+                $insert_stmt->bindValue(':program_studi', $_POST['program_studi']);
+                $insert_stmt->bindValue(':bidang_keahlian', $_POST['bidang_keahlian'] ?? null);
+                
+                if ($insert_stmt->execute()) {
+                    $success = 'Registrasi berhasil! Silakan login dengan akun Anda.';
+                } else {
+                    $error = 'Registrasi gagal. Silakan coba lagi.';
+                }
+            }
+        }
+    } catch (Exception $e) {
+        $error = 'Terjadi kesalahan: ' . $e->getMessage();
     }
 }
 
@@ -75,7 +90,7 @@ $program_studi_options = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi Mahasiswa - <?php echo APP_NAME; ?></title>
+    <title>Registrasi Dosen - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -89,7 +104,7 @@ $program_studi_options = [
     }
 
     .container {
-        max-width: 800px;
+        max-width: 700px;
         margin: 0 auto;
     }
 
@@ -223,14 +238,6 @@ $program_studi_options = [
         .grid-2 {
             grid-template-columns: 1fr;
         }
-
-        .register-card {
-            padding: 30px 20px;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-        }
     }
     </style>
 </head>
@@ -239,7 +246,7 @@ $program_studi_options = [
     <div class="container">
         <div class="register-card">
             <div class="header">
-                <h1>Registrasi Mahasiswa</h1>
+                <h1>Registrasi Dosen</h1>
                 <p>Daftar untuk mengakses Sistem Akademik</p>
             </div>
 
@@ -264,15 +271,15 @@ $program_studi_options = [
                     <!-- Left Column -->
                     <div>
                         <div class="form-group">
-                            <label class="form-label">NIM *</label>
-                            <input type="text" name="nim" class="form-input" placeholder="Masukkan NIM" required
-                                value="<?php echo htmlspecialchars($_POST['nim'] ?? ''); ?>">
+                            <label class="form-label">NIDN *</label>
+                            <input type="text" name="nidn" class="form-input" placeholder="Masukkan NIDN" required
+                                value="<?php echo htmlspecialchars($_POST['nidn'] ?? ''); ?>">
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Nama Lengkap *</label>
-                            <input type="text" name="nama" class="form-input" placeholder="Masukkan nama lengkap"
-                                required value="<?php echo htmlspecialchars($_POST['nama'] ?? ''); ?>">
+                            <input type="text" name="nama_dosen" class="form-input" placeholder="Masukkan nama lengkap"
+                                required value="<?php echo htmlspecialchars($_POST['nama_dosen'] ?? ''); ?>">
                         </div>
 
                         <div class="form-group">
@@ -287,6 +294,15 @@ $program_studi_options = [
                                 required>
                         </div>
 
+                        <div class="form-group">
+                            <label class="form-label">Gelar</label>
+                            <input type="text" name="gelar" class="form-input" placeholder="Contoh: S.Kom., M.Kom."
+                                value="<?php echo htmlspecialchars($_POST['gelar'] ?? ''); ?>">
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div>
                         <div class="form-group">
                             <label class="form-label">Jurusan *</label>
                             <select name="jurusan" class="form-select" required id="jurusan">
@@ -308,41 +324,10 @@ $program_studi_options = [
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Angkatan *</label>
-                            <select name="angkatan" class="form-select" required>
-                                <option value="">Pilih Angkatan</option>
-                                <?php 
-                                $current_year = date('Y');
-                                for ($year = $current_year; $year >= $current_year - 5; $year--): 
-                                ?>
-                                <option value="<?php echo $year; ?>"
-                                    <?php echo ($_POST['angkatan'] ?? $current_year) == $year ? 'selected' : ''; ?>>
-                                    <?php echo $year; ?>
-                                </option>
-                                <?php endfor; ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div>
-                        <div class="form-group">
-                            <label class="form-label">Tanggal Lahir</label>
-                            <input type="date" name="tanggal_lahir" class="form-input"
-                                value="<?php echo htmlspecialchars($_POST['tanggal_lahir'] ?? ''); ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Jenis Kelamin</label>
-                            <select name="jenis_kelamin" class="form-select">
-                                <option value="">Pilih Jenis Kelamin</option>
-                                <option value="L"
-                                    <?php echo ($_POST['jenis_kelamin'] ?? '') == 'L' ? 'selected' : ''; ?>>Laki-laki
-                                </option>
-                                <option value="P"
-                                    <?php echo ($_POST['jenis_kelamin'] ?? '') == 'P' ? 'selected' : ''; ?>>Perempuan
-                                </option>
-                            </select>
+                            <label class="form-label">Bidang Keahlian</label>
+                            <input type="text" name="bidang_keahlian" class="form-input"
+                                placeholder="Contoh: Pemrograman Web, Database"
+                                value="<?php echo htmlspecialchars($_POST['bidang_keahlian'] ?? ''); ?>">
                         </div>
 
                         <div class="form-group">
@@ -351,38 +336,11 @@ $program_studi_options = [
                                 placeholder="Masukkan nomor telepon"
                                 value="<?php echo htmlspecialchars($_POST['nomor_telepon'] ?? ''); ?>">
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Kelompok UKT</label>
-                            <select name="kelompok_ukt" class="form-select">
-                                <option value="1"
-                                    <?php echo ($_POST['kelompok_ukt'] ?? '1') == '1' ? 'selected' : ''; ?>>Kelompok 1
-                                </option>
-                                <option value="2"
-                                    <?php echo ($_POST['kelompok_ukt'] ?? '') == '2' ? 'selected' : ''; ?>>Kelompok 2
-                                </option>
-                                <option value="3"
-                                    <?php echo ($_POST['kelompok_ukt'] ?? '') == '3' ? 'selected' : ''; ?>>Kelompok 3
-                                </option>
-                                <option value="4"
-                                    <?php echo ($_POST['kelompok_ukt'] ?? '') == '4' ? 'selected' : ''; ?>>Kelompok 4
-                                </option>
-                                <option value="5"
-                                    <?php echo ($_POST['kelompok_ukt'] ?? '') == '5' ? 'selected' : ''; ?>>Kelompok 5
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Alamat</label>
-                            <textarea name="alamat" class="form-input" rows="4"
-                                placeholder="Masukkan alamat lengkap"><?php echo htmlspecialchars($_POST['alamat'] ?? ''); ?></textarea>
-                        </div>
                     </div>
                 </div>
 
                 <button type="submit" class="submit-btn">
-                    <i class="fas fa-user-plus mr-2"></i>
+                    <i class="fas fa-chalkboard-teacher mr-2"></i>
                     DAFTAR SEKARANG
                 </button>
             </form>
