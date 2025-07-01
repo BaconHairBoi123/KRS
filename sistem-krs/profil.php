@@ -60,13 +60,14 @@ if ($_POST && isset($_POST['action'])) {
             } elseif (getUserRole() == 'dosen') {
                 $profile_query = "UPDATE dosen SET 
                                  nama_dosen = ?, email = ?,
-                                 nomor_telepon = ?
+                                 nomor_telepon = ?, alamat = ?
                                  WHERE id_dosen = ?";
                 $profile_stmt = $conn->prepare($profile_query);
                 $profile_stmt->execute([
                     $_POST['nama_lengkap'],
                     $_POST['email'],
                     $_POST['no_telepon'],
+                    $_POST['alamat'],
                     $_SESSION['user_id']
                 ]);
             }
@@ -99,22 +100,30 @@ if ($_POST && isset($_POST['action'])) {
                     $upload_path = $upload_dir . $new_filename;
                     
                     if (move_uploaded_file($_FILES['photo']['tmp_name'], $upload_path)) {
-                        // Update database with photo path
-                        if (getUserRole() == 'mahasiswa') {
-                            $photo_query = "UPDATE mahasiswa SET foto = ? WHERE id_mahasiswa = ?";
-                        } elseif (getUserRole() == 'dosen') {
-                            $photo_query = "UPDATE dosen SET foto = ? WHERE id_dosen = ?";
-                        }
-                        
-                        if (isset($photo_query)) {
-                            $photo_stmt = $conn->prepare($photo_query);
-                            $photo_stmt->execute([$upload_path, $_SESSION['user_id']]);
+                        // Update database with photo path - check if column exists first
+                        try {
+                            if (getUserRole() == 'mahasiswa') {
+                                $photo_query = "UPDATE mahasiswa SET foto = ? WHERE id_mahasiswa = ?";
+                            } elseif (getUserRole() == 'dosen') {
+                                $photo_query = "UPDATE dosen SET foto = ? WHERE id_dosen = ?";
+                            }
                             
-                            $success = "Foto profil berhasil diupload";
-                            
-                            // Refresh profile data
-                            $stmt->execute();
-                            $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+                            if (isset($photo_query)) {
+                                $photo_stmt = $conn->prepare($photo_query);
+                                $photo_stmt->execute([$upload_path, $_SESSION['user_id']]);
+                                
+                                $success = "Foto profil berhasil diupload";
+                                
+                                // Refresh profile data
+                                $stmt->execute();
+                                $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+                            }
+                        } catch (PDOException $e) {
+                            if (strpos($e->getMessage(), 'Unknown column') !== false) {
+                                $error = "Fitur upload foto belum tersedia. Kolom foto belum ada di database.";
+                            } else {
+                                throw $e;
+                            }
                         }
                     } else {
                         $error = "Gagal mengupload foto";
@@ -192,6 +201,9 @@ if ($_POST && isset($_POST['action'])) {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
+        .bg-gradient-primary {
+            background: linear-gradient(310deg, #7928ca 0%, #ff0080 100%);
+        }
         .user-info-box {
             border: 2px solid rgba(255, 255, 255, 0.3);
         }
@@ -219,7 +231,7 @@ if ($_POST && isset($_POST['action'])) {
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <div class="w-64 p-4">
-            <div class="sidebar-soft h-full p-4">
+            <div class="sidebar-soft h-full p-4 relative">
                 <!-- Logo -->
                 <div class="flex items-center gap-3 mb-8">
                     <div class="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
@@ -251,6 +263,23 @@ if ($_POST && isset($_POST['action'])) {
                     <a href="jadwal.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-calendar w-5 mr-3"></i>
                         <span>Jadwal Kuliah</span>
+                    </a>
+                    <?php endif; ?>
+
+                    <?php if (getUserRole() == 'dosen'): ?>
+                    <a href="dosen-jadwal.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                        <i class="fas fa-calendar w-5 mr-3"></i>
+                        <span>Jadwal Mengajar</span>
+                    </a>
+                    
+                    <a href="dosen-mahasiswa.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                        <i class="fas fa-users w-5 mr-3"></i>
+                        <span>Daftar Mahasiswa</span>
+                    </a>
+                    
+                    <a href="dosen-nilai.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                        <i class="fas fa-clipboard-list w-5 mr-3"></i>
+                        <span>Input Nilai</span>
                     </a>
                     <?php endif; ?>
 
@@ -456,12 +485,12 @@ if ($_POST && isset($_POST['action'])) {
                                                 <option value="P" <?php echo ($profile['jenis_kelamin'] ?? '') == 'P' ? 'selected' : ''; ?>>Perempuan</option>
                                             </select>
                                         </div>
+                                        <?php endif; ?>
 
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat</label>
                                             <textarea name="alamat" rows="3" class="form-input w-full"><?php echo htmlspecialchars($profile['alamat'] ?? ''); ?></textarea>
                                         </div>
-                                        <?php endif; ?>
 
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">No. Telepon</label>

@@ -648,11 +648,13 @@ $prodi_list = $prodi_stmt->fetchAll(PDO::FETCH_COLUMN);
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Jurusan *</label>
                             <select name="jurusan" id="jurusanSelect" required class="form-input w-full">
                                 <option value="">Pilih Jurusan</option>
-                                <option value="Teknik Informatika">Teknik Informatika</option>
+                                <option value="Akuntansi">Akuntansi</option>
+                                <option value="Administrasi Bisnis">Administrasi Bisnis</option>
+                                <option value="Pariwisata">Pariwisata</option>
                                 <option value="Teknik Sipil">Teknik Sipil</option>
-                                <option value="Ekonomi">Ekonomi</option>
-                                <option value="Hukum">Hukum</option>
-                                <option value="Kedokteran">Kedokteran</option>
+                                <option value="Teknik Mesin">Teknik Mesin</option>
+                                <option value="Teknik Elektro">Teknik Elektro</option>
+                                <option value="Teknologi Informasi">Teknologi Informasi</option>
                             </select>
                         </div>
 
@@ -779,12 +781,51 @@ $prodi_list = $prodi_stmt->fetchAll(PDO::FETCH_COLUMN);
     <script>
     // Program studi options
     const programStudiOptions = {
-        'Teknik Informatika': ['Teknik Informatika'],
-        'Teknik Sipil': ['Teknik Sipil'],
-        'Ekonomi': ['Ekonomi'],
-        'Hukum': ['Hukum'],
-        'Kedokteran': ['Kedokteran']
-    };
+    'Akuntansi': [
+        'D2 Administrasi Perpajakan',
+        'D3 Akuntansi',
+        'D4 Akuntansi Manajerial',
+        'D4 Akuntansi Perpajakan'
+    ],
+    'Administrasi Bisnis': [
+        'D2 Manajemen Operasional Bisnis Digital',
+        'D3 Administrasi Bisnis',
+        'D4 Manajemen Bisnis Internasional',
+        'D4 Bisnis Digital',
+        'D4 Bahasa Inggris untuk Komunikasi Bisnis & Profesional'
+    ],
+    'Pariwisata': [
+        'S2 Terapan Perencanaan Pariwisata',
+        'D4 Manajemen Bisnis Pariwisata',
+        'D3 Perhotelan',
+        'D3 Usaha Perjalanan Wisata'
+    ],
+    'Teknik Sipil': [
+        'D2 Fondasi, Beton, & Pengaspalan Jalan',
+        'D3 Teknik Sipil',
+        'D4 Manajemen Proyek Konstruksi',
+        'D4 Teknologi Rekayasa Konstruksi Bangunan Gedung',
+        'D4 Teknologi Rekayasa Konstruksi Bangunan Air'
+    ],
+    'Teknik Mesin': [
+        'D2 Teknik Manufaktur Mesin',
+        'D3 Teknik Mesin',
+        'D3 Teknik Pendingin dan Tata Udara',
+        'D4 Teknologi Rekayasa Utilitas',
+        'D4 Rekayasa Perancangan Mekanik'
+    ],
+    'Teknik Elektro': [
+        'D2 Instalasi dan Pemeliharaan Kabel Bertegangan Rendah',
+        'D3 Teknik Listrik',
+        'D4 Teknik Otomasi',
+        'D4 Teknologi Rekayasa Energi Terbarukan'
+    ],
+    'Teknologi Informasi': [
+        'D2 Administrasi Jaringan Komputer',
+        'D3 Manajemen Informatika',
+        'D4 Teknologi Rekayasa Perangkat Lunak'
+    ]
+};
 
     document.getElementById('jurusanSelect').addEventListener('change', function() {
         const jurusan = this.value;

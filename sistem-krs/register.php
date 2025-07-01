@@ -51,20 +51,49 @@ if ($_POST) {
 
 // Program studi berdasarkan jurusan
 $program_studi_options = [
-    'Teknik Informatika' => [
-        'Teknik Informatika'
+    'Akuntansi' => [
+        'D2 Administrasi Perpajakan',
+        'D3 Akuntansi',
+        'D4 Akuntansi Manajerial',
+        'D4 Akuntansi Perpajakan'
+    ],
+    'Administrasi Bisnis' => [
+        'D2 Manajemen Operasional Bisnis Digital',
+        'D3 Administrasi Bisnis',
+        'D4 Manajemen Bisnis Internasional',
+        'D4 Bisnis Digital',
+        'D4 Bahasa Inggris untuk Komunikasi Bisnis & Profesional'
+    ],
+    'Pariwisata' => [
+        'S2 Terapan Perencanaan Pariwisata',
+        'D4 Manajemen Bisnis Pariwisata',
+        'D3 Perhotelan',
+        'D3 Usaha Perjalanan Wisata'
     ],
     'Teknik Sipil' => [
-        'Teknik Sipil'
+        'D2 Fondasi, Beton, & Pengaspalan Jalan',
+        'D3 Teknik Sipil',
+        'D4 Manajemen Proyek Konstruksi',
+        'D4 Teknologi Rekayasa Konstruksi Bangunan Gedung',
+        'D4 Teknologi Rekayasa Konstruksi Bangunan Air'
     ],
-    'Ekonomi' => [
-        'Ekonomi'
+    'Teknik Mesin' => [
+        'D2 Teknik Manufaktur Mesin',
+        'D3 Teknik Mesin',
+        'D3 Teknik Pendingin dan Tata Udara',
+        'D4 Teknologi Rekayasa Utilitas',
+        'D4 Rekayasa Perancangan Mekanik'
     ],
-    'Hukum' => [
-        'Hukum'
+    'Teknik Elektro' => [
+        'D2 Instalasi dan Pemeliharaan Kabel Bertegangan Rendah',
+        'D3 Teknik Listrik',
+        'D4 Teknik Otomasi',
+        'D4 Teknologi Rekayasa Energi Terbarukan'
     ],
-    'Kedokteran' => [
-        'Kedokteran'
+    'Teknologi Informasi' => [
+        'D2 Administrasi Jaringan Komputer',
+        'D3 Manajemen Informatika',
+        'D4 Teknologi Rekayasa Perangkat Lunak'
     ]
 ];
 ?>

@@ -1,0 +1,40 @@
+[30-Jun-2025 20:32:14 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:01 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:03 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:04 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:11 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:14 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:15 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10
+[30-Jun-2025 20:34:16 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function getUserData() in C:\xampp\htdocs\sistem-krs\dashboard.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sistem-krs\dashboard.php on line 10

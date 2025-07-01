@@ -61,6 +61,28 @@ if ($userRole == 'mahasiswa') {
     $kelas_stmt->execute();
     $stats['kelas'] = $kelas_stmt->fetchColumn();
 }
+
+// Recent activities based on role
+$activities = [];
+if ($userRole == 'mahasiswa') {
+    $activities = [
+        ['type' => 'krs', 'message' => 'KRS berhasil disimpan untuk semester ini', 'time' => '2 jam lalu'],
+        ['type' => 'jadwal', 'message' => 'Jadwal kuliah telah diperbarui', 'time' => '1 hari lalu'],
+        ['type' => 'absensi', 'message' => 'Absensi Pemrograman Web tercatat', 'time' => '3 jam lalu'],
+    ];
+} elseif ($userRole == 'dosen') {
+    $activities = [
+        ['type' => 'absensi', 'message' => 'Input absensi Pemrograman Web', 'time' => '2 jam lalu'],
+        ['type' => 'nilai', 'message' => 'Update nilai UTS Basis Data', 'time' => '1 hari lalu'],
+        ['type' => 'jadwal', 'message' => 'Jadwal kuliah hari ini: 3 kelas', 'time' => '3 jam lalu'],
+    ];
+} elseif ($userRole == 'admin') {
+    $activities = [
+        ['type' => 'user', 'message' => 'Mahasiswa baru terdaftar: John Doe', 'time' => '2 jam lalu'],
+        ['type' => 'course', 'message' => 'Mata kuliah baru ditambahkan: Pemrograman Mobile', 'time' => '1 hari lalu'],
+        ['type' => 'schedule', 'message' => 'Jadwal semester baru telah disusun', 'time' => '2 hari lalu'],
+    ];
+}
 ?>
 
 <!DOCTYPE html>
@@ -167,7 +189,7 @@ if ($userRole == 'mahasiswa') {
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <div class="w-64 p-4">
-            <div class="sidebar-soft h-full p-4">
+            <div class="sidebar-soft h-full p-4 relative">
                 <!-- Logo -->
                 <div class="flex items-center gap-3 mb-8">
                     <div class="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
@@ -188,7 +210,7 @@ if ($userRole == 'mahasiswa') {
                 </div>
 
                 <!-- Navigation -->
-                <nav class="space-y-2">
+                <nav class="space-y-2" style="padding-bottom: 120px;">
                     <div class="px-3 py-2">
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Menu Utama</p>
                     </div>
@@ -208,6 +230,21 @@ if ($userRole == 'mahasiswa') {
                     <a href="jadwal.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-calendar w-5 mr-3"></i>
                         <span>Jadwal Kuliah</span>
+                    </a>
+
+                    <div class="px-3 py-2 mt-6">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Akademik</p>
+                    </div>
+
+                    <a href="absensi-semester.php"
+                        class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                        <i class="fas fa-chart-line w-5 mr-3"></i>
+                        <span>Absen Semester</span>
+                    </a>
+
+                    <a href="profil.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                        <i class="fas fa-user w-5 mr-3"></i>
+                        <span>Profil</span>
                     </a>
                     <?php endif; ?>
 
@@ -248,6 +285,11 @@ if ($userRole == 'mahasiswa') {
                         <i class="fas fa-chart-bar w-5 mr-3"></i>
                         <span>Laporan Akademik</span>
                     </a>
+
+                    <a href="profil.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                        <i class="fas fa-user w-5 mr-3"></i>
+                        <span>Profil</span>
+                    </a>
                     <?php endif; ?>
 
                     <?php if ($userRole == 'admin'): ?>
@@ -255,15 +297,21 @@ if ($userRole == 'mahasiswa') {
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Manajemen Pengguna</p>
                     </div>
 
+                    <a href="admin-users.php"
+                        class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                        <i class="fas fa-users-cog w-5 mr-3"></i>
+                        <span>Kelola Pengguna</span>
+                    </a>
+
                     <a href="admin-mahasiswa.php"
                         class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-users w-5 mr-3"></i>
-                        <span>Kelola Mahasiswa</span>
+                        <span>Data Mahasiswa</span>
                     </a>
 
                     <a href="admin-dosen.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-chalkboard-teacher w-5 mr-3"></i>
-                        <span>Kelola Dosen</span>
+                        <span>Data Dosen</span>
                     </a>
 
                     <div class="px-3 py-2 mt-6">
@@ -288,38 +336,21 @@ if ($userRole == 'mahasiswa') {
                     </a>
 
                     <div class="px-3 py-2 mt-6">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Laporan</p>
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Sistem</p>
                     </div>
 
                     <a href="admin-laporan.php"
                         class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-chart-bar w-5 mr-3"></i>
-                        <span>Laporan Akademik</span>
+                        <span>Laporan</span>
                     </a>
 
-                    <a href="admin-sistem.php"
+                    <a href="admin-settings.php"
                         class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-cog w-5 mr-3"></i>
-                        <span>Pengaturan Sistem</span>
+                        <span>Pengaturan</span>
                     </a>
                     <?php endif; ?>
-
-                    <?php if ($userRole == 'mahasiswa'): ?>
-                    <div class="px-3 py-2 mt-6">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Akademik</p>
-                    </div>
-
-                    <a href="absensi-semester.php"
-                        class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
-                        <i class="fas fa-chart-line w-5 mr-3"></i>
-                        <span>Absen Semester</span>
-                    </a>
-                    <?php endif; ?>
-
-                    <a href="profil.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
-                        <i class="fas fa-user w-5 mr-3"></i>
-                        <span>Profil</span>
-                    </a>
                 </nav>
 
                 <!-- User Info -->
@@ -346,7 +377,7 @@ if ($userRole == 'mahasiswa') {
                                     ?>
                                 </p>
                             </div>
-                            <a href="logout.php" class="text-red-500 hover:text-red-700">
+                            <a href="logout.php" class="text-red-500 hover:text-red-700" title="Logout">
                                 <i class="fas fa-sign-out-alt"></i>
                             </a>
                         </div>
@@ -602,36 +633,218 @@ if ($userRole == 'mahasiswa') {
                             <span class="text-sm font-medium">Laporan</span>
                         </a>
                         <?php elseif ($userRole == 'admin'): ?>
-                        <a href="admin-mahasiswa.php"
+                        <a href="admin-users.php"
                             class="flex flex-col items-center p-4 bg-gradient-primary rounded-xl text-white hover:shadow-lg transition-all duration-200">
+                            <i class="fas fa-users-cog text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">Kelola Pengguna</span>
+                        </a>
+
+                        <a href="admin-mahasiswa.php"
+                            class="flex flex-col items-center p-4 bg-gradient-success rounded-xl text-white hover:shadow-lg transition-all duration-200">
                             <i class="fas fa-user-plus text-2xl mb-2"></i>
                             <span class="text-sm font-medium">Tambah Mahasiswa</span>
                         </a>
 
                         <a href="admin-dosen.php"
-                            class="flex flex-col items-center p-4 bg-gradient-success rounded-xl text-white hover:shadow-lg transition-all duration-200">
+                            class="flex flex-col items-center p-4 bg-gradient-info rounded-xl text-white hover:shadow-lg transition-all duration-200">
                             <i class="fas fa-chalkboard-teacher text-2xl mb-2"></i>
                             <span class="text-sm font-medium">Tambah Dosen</span>
                         </a>
 
                         <a href="admin-matakuliah.php"
-                            class="flex flex-col items-center p-4 bg-gradient-info rounded-xl text-white hover:shadow-lg transition-all duration-200">
+                            class="flex flex-col items-center p-4 bg-gradient-warning rounded-xl text-white hover:shadow-lg transition-all duration-200">
                             <i class="fas fa-book text-2xl mb-2"></i>
                             <span class="text-sm font-medium">Mata Kuliah</span>
                         </a>
 
                         <a href="admin-jadwal.php"
-                            class="flex flex-col items-center p-4 bg-gradient-warning rounded-xl text-white hover:shadow-lg transition-all duration-200">
+                            class="flex flex-col items-center p-4 bg-purple-500 rounded-xl text-white hover:shadow-lg transition-all duration-200">
                             <i class="fas fa-calendar text-2xl mb-2"></i>
                             <span class="text-sm font-medium">Jadwal</span>
+                        </a>
+
+                        <a href="admin-krs.php"
+                            class="flex flex-col items-center p-4 bg-indigo-500 rounded-xl text-white hover:shadow-lg transition-all duration-200">
+                            <i class="fas fa-clipboard-list text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">Kelola KRS</span>
                         </a>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
 
+            <!-- Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <?php if ($userRole == 'dosen'): ?>
+                <!-- Jadwal Hari Ini -->
+                <div class="card">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-calendar-day text-blue-500 mr-2"></i>
+                            Jadwal Hari Ini
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div>
+                                    <p class="font-medium text-gray-800">Pemrograman Web</p>
+                                    <p class="text-sm text-gray-600">Kelas A - Ruang 201</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-blue-600">08:00 - 10:00</p>
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Berlangsung</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-medium text-gray-800">Basis Data</p>
+                                    <p class="text-sm text-gray-600">Kelas B - Ruang 105</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-600">10:30 - 12:30</p>
+                                    <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Akan Datang</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-medium text-gray-800">Algoritma Pemrograman</p>
+                                    <p class="text-sm text-gray-600">Kelas C - Ruang 301</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-600">13:30 - 15:30</p>
+                                    <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Akan Datang</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t">
+                            <a href="dosen-jadwal.php" class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                                Lihat Semua Jadwal <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <?php elseif ($userRole == 'admin'): ?>
+                <!-- Sistem Status -->
+                <div class="card">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-server text-green-500 mr-2"></i>
+                            Status Sistem
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-gray-800">Database Server</span>
+                                </div>
+                                <span class="text-sm text-green-600 font-medium">Online</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-gray-800">Web Server</span>
+                                </div>
+                                <span class="text-sm text-green-600 font-medium">Online</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <span class="font-medium text-gray-800">Periode KRS</span>
+                                </div>
+                                <span class="text-sm text-blue-600 font-medium">Aktif</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <span class="font-medium text-gray-800">Backup Terakhir</span>
+                                </div>
+                                <span class="text-sm text-yellow-600 font-medium">2 jam lalu</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php else: ?>
+                <!-- Jadwal Kuliah Hari Ini untuk Mahasiswa -->
+                <div class="card">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-calendar-day text-blue-500 mr-2"></i>
+                            Jadwal Kuliah Hari Ini
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div>
+                                    <p class="font-medium text-gray-800">Pemrograman Web</p>
+                                    <p class="text-sm text-gray-600">Ruang 201 - Dr. Reimu Hakurei</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-blue-600">08:00 - 10:00</p>
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Berlangsung</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-medium text-gray-800">Basis Data</p>
+                                    <p class="text-sm text-gray-600">Ruang 105 - Dr. Marisa Kirisame</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-600">10:30 - 12:30</p>
+                                    <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Akan Datang</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t">
+                            <a href="jadwal.php" class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                                Lihat Semua Jadwal <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Aktivitas Terbaru -->
+                <div class="card">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-bell text-orange-500 mr-2"></i>
+                            Aktivitas Terbaru
+                        </h3>
+                        <div class="space-y-3">
+                            <?php foreach ($activities as $activity): ?>
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <?php if ($activity['type'] == 'krs' || $activity['type'] == 'user'): ?>
+                                        <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+                                    <?php elseif ($activity['type'] == 'absensi'): ?>
+                                        <i class="fas fa-clipboard-check text-blue-600 text-sm"></i>
+                                    <?php elseif ($activity['type'] == 'nilai'): ?>
+                                        <i class="fas fa-star text-yellow-600 text-sm"></i>
+                                    <?php elseif ($activity['type'] == 'course'): ?>
+                                        <i class="fas fa-book text-green-600 text-sm"></i>
+                                    <?php else: ?>
+                                        <i class="fas fa-calendar text-purple-600 text-sm"></i>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-800"><?php echo $activity['message']; ?></p>
+                                    <p class="text-xs text-gray-500"><?php echo $activity['time']; ?></p>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Welcome Message -->
-            <div class="card">
+            <div class="card mt-6">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">🎉 Selamat Datang di Sistem KRS!</h3>
                     <p class="text-gray-600 mb-4">
@@ -663,6 +876,7 @@ if ($userRole == 'mahasiswa') {
                     <div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded">
                         <h4 class="text-purple-800 font-semibold mb-2">Panduan untuk Administrator:</h4>
                         <ul class="text-purple-700 text-sm space-y-1">
+                            <li>• Kelola semua pengguna sistem di menu "Kelola Pengguna"</li>
                             <li>• Kelola data mahasiswa dan dosen</li>
                             <li>• Atur mata kuliah dan penjadwalan</li>
                             <li>• Pantau sistem KRS mahasiswa</li>

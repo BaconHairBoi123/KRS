@@ -38,8 +38,8 @@ if ($_POST) {
                 $error = 'NIDN atau email sudah terdaftar.';
             } else {
                 // Insert new dosen
-                $insert_query = "INSERT INTO dosen (nidn, nama_dosen, email, password, nomor_telepon, gelar, jurusan, program_studi, bidang_keahlian) 
-                               VALUES (:nidn, :nama_dosen, :email, :password, :nomor_telepon, :gelar, :jurusan, :program_studi, :bidang_keahlian)";
+                $insert_query = "INSERT INTO dosen (nidn, nama_dosen, email, password, nomor_telepon, gelar, jurusan, program_studi, bidang_keahlian, alamat) 
+                               VALUES (:nidn, :nama_dosen, :email, :password, :nomor_telepon, :gelar, :jurusan, :program_studi, :bidang_keahlian, :alamat)";
                 
                 $insert_stmt = $conn->prepare($insert_query);
                 $insert_stmt->bindValue(':nidn', $_POST['nidn']);
@@ -51,6 +51,7 @@ if ($_POST) {
                 $insert_stmt->bindValue(':jurusan', $_POST['jurusan']);
                 $insert_stmt->bindValue(':program_studi', $_POST['program_studi']);
                 $insert_stmt->bindValue(':bidang_keahlian', $_POST['bidang_keahlian'] ?? null);
+                $insert_stmt->bindValue(':alamat', $_POST['alamat'] ?? null);
                 
                 if ($insert_stmt->execute()) {
                     $success = 'Registrasi berhasil! Silakan login dengan akun Anda.';
@@ -66,20 +67,49 @@ if ($_POST) {
 
 // Program studi berdasarkan jurusan
 $program_studi_options = [
-    'Teknik Informatika' => [
-        'Teknik Informatika'
+    'Akuntansi' => [
+        'D2 Administrasi Perpajakan',
+        'D3 Akuntansi',
+        'D4 Akuntansi Manajerial',
+        'D4 Akuntansi Perpajakan'
+    ],
+    'Administrasi Bisnis' => [
+        'D2 Manajemen Operasional Bisnis Digital',
+        'D3 Administrasi Bisnis',
+        'D4 Manajemen Bisnis Internasional',
+        'D4 Bisnis Digital',
+        'D4 Bahasa Inggris untuk Komunikasi Bisnis & Profesional'
+    ],
+    'Pariwisata' => [
+        'S2 Terapan Perencanaan Pariwisata',
+        'D4 Manajemen Bisnis Pariwisata',
+        'D3 Perhotelan',
+        'D3 Usaha Perjalanan Wisata'
     ],
     'Teknik Sipil' => [
-        'Teknik Sipil'
+        'D2 Fondasi, Beton, & Pengaspalan Jalan',
+        'D3 Teknik Sipil',
+        'D4 Manajemen Proyek Konstruksi',
+        'D4 Teknologi Rekayasa Konstruksi Bangunan Gedung',
+        'D4 Teknologi Rekayasa Konstruksi Bangunan Air'
     ],
-    'Ekonomi' => [
-        'Ekonomi'
+    'Teknik Mesin' => [
+        'D2 Teknik Manufaktur Mesin',
+        'D3 Teknik Mesin',
+        'D3 Teknik Pendingin dan Tata Udara',
+        'D4 Teknologi Rekayasa Utilitas',
+        'D4 Rekayasa Perancangan Mekanik'
     ],
-    'Hukum' => [
-        'Hukum'
+    'Teknik Elektro' => [
+        'D2 Instalasi dan Pemeliharaan Kabel Bertegangan Rendah',
+        'D3 Teknik Listrik',
+        'D4 Teknik Otomasi',
+        'D4 Teknologi Rekayasa Energi Terbarukan'
     ],
-    'Kedokteran' => [
-        'Kedokteran'
+    'Teknologi Informasi' => [
+        'D2 Administrasi Jaringan Komputer',
+        'D3 Manajemen Informatika',
+        'D4 Teknologi Rekayasa Perangkat Lunak'
     ]
 ];
 ?>
@@ -104,7 +134,7 @@ $program_studi_options = [
     }
 
     .container {
-        max-width: 700px;
+        max-width: 800px;
         margin: 0 auto;
     }
 
@@ -147,7 +177,8 @@ $program_studi_options = [
     }
 
     .form-input,
-    .form-select {
+    .form-select,
+    .form-textarea {
         width: 100%;
         padding: 12px 16px;
         border: 2px solid #e2e8f0;
@@ -158,14 +189,21 @@ $program_studi_options = [
         color: #2d3748;
     }
 
+    .form-textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
     .form-input:focus,
-    .form-select:focus {
+    .form-select:focus,
+    .form-textarea:focus {
         outline: none;
         border-color: #4facfe;
         box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
     }
 
-    .form-input::placeholder {
+    .form-input::placeholder,
+    .form-textarea::placeholder {
         color: #a0aec0;
     }
 
@@ -299,6 +337,13 @@ $program_studi_options = [
                             <input type="text" name="gelar" class="form-input" placeholder="Contoh: S.Kom., M.Kom."
                                 value="<?php echo htmlspecialchars($_POST['gelar'] ?? ''); ?>">
                         </div>
+
+                        <div class="form-group">
+                            <label class="form-label">No. Telepon</label>
+                            <input type="tel" name="nomor_telepon" class="form-input"
+                                placeholder="Masukkan nomor telepon"
+                                value="<?php echo htmlspecialchars($_POST['nomor_telepon'] ?? ''); ?>">
+                        </div>
                     </div>
 
                     <!-- Right Column -->
@@ -331,10 +376,8 @@ $program_studi_options = [
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">No. Telepon</label>
-                            <input type="tel" name="nomor_telepon" class="form-input"
-                                placeholder="Masukkan nomor telepon"
-                                value="<?php echo htmlspecialchars($_POST['nomor_telepon'] ?? ''); ?>">
+                            <label class="form-label">Alamat</label>
+                            <textarea name="alamat" class="form-textarea" placeholder="Masukkan alamat lengkap"><?php echo htmlspecialchars($_POST['alamat'] ?? ''); ?></textarea>
                         </div>
                     </div>
                 </div>

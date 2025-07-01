@@ -137,7 +137,7 @@ $count_stmt->execute();
 $total_records = $count_stmt->fetchColumn();
 $total_pages = ceil($total_records / $limit);
 
-// Get kelas data
+// Get kelas data - Fixed ORDER BY clause
 $query = "SELECT k.*, mk.nama_matakuliah, mk.kode_matakuliah, mk.sks, d.nama_dosen,
                  COUNT(krs.id_krs) as jumlah_mahasiswa
           FROM kelas k 
@@ -146,7 +146,7 @@ $query = "SELECT k.*, mk.nama_matakuliah, mk.kode_matakuliah, mk.sks, d.nama_dos
           LEFT JOIN krs ON k.id_kelas = krs.id_kelas
           $where_clause 
           GROUP BY k.id_kelas
-          ORDER BY k.hari, k.jam_mulai 
+          ORDER BY k.nama_kelas, k.jam_mulai 
           LIMIT :limit OFFSET :offset";
 $stmt = $conn->prepare($query);
 foreach ($params as $key => $value) {

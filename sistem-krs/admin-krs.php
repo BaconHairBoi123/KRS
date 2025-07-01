@@ -31,7 +31,7 @@ if ($_POST && isset($_POST['action'])) {
     if ($_POST['action'] == 'approve_krs') {
         try {
             $krs_id = $_POST['krs_id'];
-            $query = "UPDATE krs SET status = 'disetujui' WHERE id_krs = :id";
+            $query = "UPDATE krs SET status_krs = 'disetujui' WHERE id_krs = :id";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':id', $krs_id);
             $stmt->execute();
@@ -45,7 +45,7 @@ if ($_POST && isset($_POST['action'])) {
     if ($_POST['action'] == 'reject_krs') {
         try {
             $krs_id = $_POST['krs_id'];
-            $query = "UPDATE krs SET status = 'ditolak' WHERE id_krs = :id";
+            $query = "UPDATE krs SET status_krs = 'ditolak' WHERE id_krs = :id";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':id', $krs_id);
             $stmt->execute();
@@ -98,7 +98,7 @@ if (!empty($search)) {
 }
 
 if (!empty($status)) {
-    $where_conditions[] = "krs.status = :status";
+    $where_conditions[] = "krs.status_krs = :status";
     $params[':status'] = $status;
 }
 
@@ -152,9 +152,9 @@ $krs_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Get statistics
 $stats_query = "SELECT 
                     COUNT(*) as total_krs,
-                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-                    SUM(CASE WHEN status = 'disetujui' THEN 1 ELSE 0 END) as disetujui,
-                    SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) as ditolak
+                    SUM(CASE WHEN status_krs = 'pending' THEN 1 ELSE 0 END) as pending,
+                    SUM(CASE WHEN status_krs = 'disetujui' THEN 1 ELSE 0 END) as disetujui,
+                    SUM(CASE WHEN status_krs = 'ditolak' THEN 1 ELSE 0 END) as ditolak
                 FROM krs";
 $stats_stmt = $conn->prepare($stats_query);
 $stats_stmt->execute();
@@ -295,8 +295,7 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
                         <span>Mata Kuliah</span>
                     </a>
 
-                    <a href="admin-jadwal.php"
-                        class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                    <a href="admin-jadwal.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-calendar w-5 mr-3"></i>
                         <span>Penjadwalan</span>
                     </a>
@@ -352,104 +351,20 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-800">Manajemen KRS</h1>
-                            <p class="text-gray-600">Kelola periode KRS dan persetujuan mahasiswa</p>
+                            <p class="text-gray-600">Kelola pengisian KRS mahasiswa dan periode KRS</p>
                         </div>
-                        <div class="flex gap-3">
-                            <form method="POST" class="inline">
+                        <div class="flex items-center gap-4">
+                            <form method="POST" class="flex items-center gap-3">
                                 <input type="hidden" name="action" value="toggle_krs_period">
-                                <input type="hidden" name="krs_status"
-                                    value="<?php echo $krs_open == '1' ? '0' : '1'; ?>">
+                                <input type="hidden" name="krs_status" value="<?php echo $krs_open == '1' ? '0' : '1'; ?>">
+                                <span class="text-sm font-medium text-gray-700">Periode KRS:</span>
                                 <button type="submit"
-                                    class="<?php echo $krs_open == '1' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'; ?> text-white px-6 py-3 rounded-xl transition-colors">
-                                    <i class="fas fa-<?php echo $krs_open == '1' ? 'lock' : 'unlock'; ?> mr-2"></i>
-                                    <?php echo $krs_open == '1' ? 'Tutup KRS' : 'Buka KRS'; ?>
+                                    class="px-4 py-2 rounded-lg font-semibold transition-colors <?php echo $krs_open == '1' ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-red-100 text-red-800 hover:bg-red-200'; ?>">
+                                    <i class="fas <?php echo $krs_open == '1' ? 'fa-unlock' : 'fa-lock'; ?> mr-2"></i>
+                                    <?php echo $krs_open == '1' ? 'Buka' : 'Tutup'; ?>
                                 </button>
                             </form>
-                            <button onclick="exportKRS()"
-                                class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors">
-                                <i class="fas fa-download mr-2"></i>
-                                Export KRS
-                            </button>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-clipboard-list text-blue-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Total KRS</p>
-                                <p class="text-2xl font-bold text-gray-900"><?php echo $stats['total_krs']; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-clock text-yellow-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Pending</p>
-                                <p class="text-2xl font-bold text-gray-900"><?php echo $stats['pending']; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-check text-green-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Disetujui</p>
-                                <p class="text-2xl font-bold text-gray-900"><?php echo $stats['disetujui']; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-times text-red-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Ditolak</p>
-                                <p class="text-2xl font-bold text-gray-900"><?php echo $stats['ditolak']; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- KRS Status Alert -->
-            <div class="mb-6">
-                <div
-                    class="<?php echo $krs_open == '1' ? 'bg-green-50 border-green-400' : 'bg-red-50 border-red-400'; ?> border-l-4 p-4 rounded-lg">
-                    <div class="flex">
-                        <i
-                            class="fas fa-<?php echo $krs_open == '1' ? 'unlock text-green-400' : 'lock text-red-400'; ?> mr-3 mt-0.5"></i>
-                        <p class="<?php echo $krs_open == '1' ? 'text-green-700' : 'text-red-700'; ?>">
-                            Periode KRS saat ini:
-                            <strong><?php echo $krs_open == '1' ? 'DIBUKA' : 'DITUTUP'; ?></strong>
-                            <?php if ($krs_open == '1'): ?>
-                            - Mahasiswa dapat mengisi dan mengubah KRS
-                            <?php else: ?>
-                            - Mahasiswa tidak dapat mengisi atau mengubah KRS
-                            <?php endif; ?>
-                        </p>
                     </div>
                 </div>
             </div>
@@ -472,6 +387,65 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
                 </div>
             </div>
             <?php endif; ?>
+
+            <!-- Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div class="card">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clipboard-list text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total KRS</p>
+                                <p class="text-2xl font-bold text-gray-800"><?php echo $stats['total_krs']; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Pending</p>
+                                <p class="text-2xl font-bold text-gray-800"><?php echo $stats['pending']; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Disetujui</p>
+                                <p class="text-2xl font-bold text-gray-800"><?php echo $stats['disetujui']; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-times text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Ditolak</p>
+                                <p class="text-2xl font-bold text-gray-800"><?php echo $stats['ditolak']; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Filters -->
             <div class="card mb-6">
@@ -561,6 +535,9 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
                                     Status</th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Tanggal</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi</th>
                             </tr>
                         </thead>
@@ -576,8 +553,7 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
                                             <div class="text-sm font-medium text-gray-900">
                                                 <?php echo $krs['nama_mahasiswa']; ?></div>
                                             <div class="text-sm text-gray-500"><?php echo $krs['nim']; ?></div>
-                                            <div class="text-sm text-gray-500"><?php echo $krs['program_studi']; ?>
-                                            </div>
+                                            <div class="text-sm text-gray-500"><?php echo $krs['program_studi']; ?></div>
                                         </div>
                                     </div>
                                 </td>
@@ -588,45 +564,44 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900"><?php echo $krs['nama_kelas']; ?></div>
-                                    <div class="text-sm text-gray-500"><?php echo $krs['semester']; ?> -
-                                        <?php echo $krs['tahun_ajaran']; ?></div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <?php echo $krs['nama_dosen'] ?: 'Belum ditentukan'; ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    <div class="text-sm text-gray-900">
+                                        <?php echo $krs['nama_dosen'] ?: 'Belum ditentukan'; ?></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="px-2 py-1 text-xs font-semibold rounded-full 
                                         <?php 
-                                        switch($krs['status']) {
-                                            case 'pending': echo 'bg-yellow-100 text-yellow-800'; break;
-                                            case 'disetujui': echo 'bg-green-100 text-green-800'; break;
-                                            case 'ditolak': echo 'bg-red-100 text-red-800'; break;
-                                            default: echo 'bg-gray-100 text-gray-800';
-                                        }
+                                        if ($krs['status_krs'] == 'pending') echo 'bg-yellow-100 text-yellow-800';
+                                        elseif ($krs['status_krs'] == 'disetujui') echo 'bg-green-100 text-green-800';
+                                        else echo 'bg-red-100 text-red-800';
                                         ?>">
-                                        <?php echo ucfirst($krs['status']); ?>
+                                        <?php echo ucfirst($krs['status_krs']); ?>
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        <?php echo date('d/m/Y', strtotime($krs['created_at'])); ?></div>
+                                    <div class="text-sm text-gray-500">
+                                        <?php echo date('H:i', strtotime($krs['created_at'])); ?></div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex gap-2">
-                                        <?php if ($krs['status'] == 'pending'): ?>
-                                        <button
-                                            onclick="approveKRS(<?php echo $krs['id_krs']; ?>, '<?php echo $krs['nama_mahasiswa']; ?>', '<?php echo $krs['nama_matakuliah']; ?>')"
-                                            class="text-green-600 hover:text-green-900">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button
-                                            onclick="rejectKRS(<?php echo $krs['id_krs']; ?>, '<?php echo $krs['nama_mahasiswa']; ?>', '<?php echo $krs['nama_matakuliah']; ?>')"
-                                            class="text-red-600 hover:text-red-900">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                        <?php endif; ?>
-                                        <button
-                                            onclick="deleteKRS(<?php echo $krs['id_krs']; ?>, '<?php echo $krs['nama_mahasiswa']; ?>', '<?php echo $krs['nama_matakuliah']; ?>')"
-                                            class="text-red-600 hover:text-red-900">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                                    <?php if ($krs['status_krs'] == 'pending'): ?>
+                                    <button onclick="approveKrs(<?php echo $krs['id_krs']; ?>)"
+                                        class="text-green-600 hover:text-green-900 mr-3" title="Setujui">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button onclick="rejectKrs(<?php echo $krs['id_krs']; ?>)"
+                                        class="text-red-600 hover:text-red-900 mr-3" title="Tolak">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <?php endif; ?>
+                                    <button
+                                        onclick="deleteKrs(<?php echo $krs['id_krs']; ?>, '<?php echo $krs['nama_mahasiswa']; ?>', '<?php echo $krs['nama_matakuliah']; ?>')"
+                                        class="text-red-600 hover:text-red-900" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -671,93 +646,28 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
         </div>
     </div>
 
-    <!-- Approve Modal -->
-    <div id="approveModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <!-- Action Modals -->
+    <div id="actionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
             <div class="text-center">
-                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-check text-green-600 text-2xl"></i>
+                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" id="modalIcon">
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Setujui KRS</h3>
-                <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menyetujui KRS <strong
-                        id="approveMahasiswa"></strong> untuk mata kuliah <strong id="approveMatakuliah"></strong>?</p>
+                <h3 class="text-xl font-bold text-gray-800 mb-2" id="modalTitle"></h3>
+                <p class="text-gray-600 mb-6" id="modalMessage"></p>
 
-                <form method="POST" id="approveForm">
-                    <input type="hidden" name="action" value="approve_krs">
-                    <input type="hidden" name="krs_id" id="approveKrsId">
+                <form method="POST" id="actionForm">
+                    <input type="hidden" name="action" id="actionType">
+                    <input type="hidden" name="krs_id" id="actionKrsId">
 
                     <div class="flex gap-3">
-                        <button type="button" onclick="closeApproveModal()"
+                        <button type="button" onclick="closeActionModal()"
                             class="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                             Batal
                         </button>
-                        <button type="submit"
-                            class="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                            <i class="fas fa-check mr-2"></i>
-                            Setujui
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reject Modal -->
-    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-times text-red-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Tolak KRS</h3>
-                <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menolak KRS <strong id="rejectMahasiswa"></strong>
-                    untuk mata kuliah <strong id="rejectMatakuliah"></strong>?</p>
-
-                <form method="POST" id="rejectForm">
-                    <input type="hidden" name="action" value="reject_krs">
-                    <input type="hidden" name="krs_id" id="rejectKrsId">
-
-                    <div class="flex gap-3">
-                        <button type="button" onclick="closeRejectModal()"
-                            class="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="flex-1 py-3 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                            <i class="fas fa-times mr-2"></i>
-                            Tolak
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-trash text-red-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Hapus KRS</h3>
-                <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus KRS <strong
-                        id="deleteMahasiswa"></strong> untuk mata kuliah <strong id="deleteMatakuliah"></strong>?
-                    Tindakan ini tidak dapat dibatalkan.</p>
-
-                <form method="POST" id="deleteForm">
-                    <input type="hidden" name="action" value="delete_krs">
-                    <input type="hidden" name="krs_id" id="deleteKrsId">
-
-                    <div class="flex gap-3">
-                        <button type="button" onclick="closeDeleteModal()"
-                            class="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="flex-1 py-3 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                            <i class="fas fa-trash mr-2"></i>
-                            Hapus
+                        <button type="submit" id="confirmButton"
+                            class="flex-1 py-3 px-4 rounded-lg transition-colors text-white">
+                            <i class="mr-2" id="confirmIcon"></i>
+                            <span id="confirmText"></span>
                         </button>
                     </div>
                 </form>
@@ -766,66 +676,69 @@ $tahun_list = $tahun_stmt->fetchAll(PDO::FETCH_COLUMN);
     </div>
 
     <script>
-    function approveKRS(krsId, mahasiswa, matakuliah) {
-        document.getElementById('approveKrsId').value = krsId;
-        document.getElementById('approveMahasiswa').textContent = mahasiswa;
-        document.getElementById('approveMatakuliah').textContent = matakuliah;
-        document.getElementById('approveModal').classList.remove('hidden');
-        document.getElementById('approveModal').classList.add('flex');
+    function approveKrs(id) {
+        document.getElementById('modalIcon').className =
+            'w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4';
+        document.getElementById('modalIcon').innerHTML = '<i class="fas fa-check text-green-600 text-2xl"></i>';
+        document.getElementById('modalTitle').textContent = 'Setujui KRS';
+        document.getElementById('modalMessage').textContent =
+            'Apakah Anda yakin ingin menyetujui pengambilan mata kuliah ini?';
+        document.getElementById('actionType').value = 'approve_krs';
+        document.getElementById('actionKrsId').value = id;
+        document.getElementById('confirmButton').className =
+            'flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors';
+        document.getElementById('confirmIcon').className = 'fas fa-check mr-2';
+        document.getElementById('confirmText').textContent = 'Setujui';
+
+        document.getElementById('actionModal').classList.remove('hidden');
+        document.getElementById('actionModal').classList.add('flex');
     }
 
-    function closeApproveModal() {
-        document.getElementById('approveModal').classList.add('hidden');
-        document.getElementById('approveModal').classList.remove('flex');
+    function rejectKrs(id) {
+        document.getElementById('modalIcon').className =
+            'w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4';
+        document.getElementById('modalIcon').innerHTML = '<i class="fas fa-times text-red-600 text-2xl"></i>';
+        document.getElementById('modalTitle').textContent = 'Tolak KRS';
+        document.getElementById('modalMessage').textContent =
+            'Apakah Anda yakin ingin menolak pengambilan mata kuliah ini?';
+        document.getElementById('actionType').value = 'reject_krs';
+        document.getElementById('actionKrsId').value = id;
+        document.getElementById('confirmButton').className =
+            'flex-1 py-3 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors';
+        document.getElementById('confirmIcon').className = 'fas fa-times mr-2';
+        document.getElementById('confirmText').textContent = 'Tolak';
+
+        document.getElementById('actionModal').classList.remove('hidden');
+        document.getElementById('actionModal').classList.add('flex');
     }
 
-    function rejectKRS(krsId, mahasiswa, matakuliah) {
-        document.getElementById('rejectKrsId').value = krsId;
-        document.getElementById('rejectMahasiswa').textContent = mahasiswa;
-        document.getElementById('rejectMatakuliah').textContent = matakuliah;
-        document.getElementById('rejectModal').classList.remove('hidden');
-        document.getElementById('rejectModal').classList.add('flex');
+    function deleteKrs(id, mahasiswa, matakuliah) {
+        document.getElementById('modalIcon').className =
+            'w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4';
+        document.getElementById('modalIcon').innerHTML = '<i class="fas fa-trash text-red-600 text-2xl"></i>';
+        document.getElementById('modalTitle').textContent = 'Hapus KRS';
+        document.getElementById('modalMessage').innerHTML =
+            `Apakah Anda yakin ingin menghapus KRS <strong>${mahasiswa}</strong> untuk mata kuliah <strong>${matakuliah}</strong>? Tindakan ini tidak dapat dibatalkan.`;
+        document.getElementById('actionType').value = 'delete_krs';
+        document.getElementById('actionKrsId').value = id;
+        document.getElementById('confirmButton').className =
+            'flex-1 py-3 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors';
+        document.getElementById('confirmIcon').className = 'fas fa-trash mr-2';
+        document.getElementById('confirmText').textContent = 'Hapus';
+
+        document.getElementById('actionModal').classList.remove('hidden');
+        document.getElementById('actionModal').classList.add('flex');
     }
 
-    function closeRejectModal() {
-        document.getElementById('rejectModal').classList.add('hidden');
-        document.getElementById('rejectModal').classList.remove('flex');
+    function closeActionModal() {
+        document.getElementById('actionModal').classList.add('hidden');
+        document.getElementById('actionModal').classList.remove('flex');
     }
 
-    function deleteKRS(krsId, mahasiswa, matakuliah) {
-        document.getElementById('deleteKrsId').value = krsId;
-        document.getElementById('deleteMahasiswa').textContent = mahasiswa;
-        document.getElementById('deleteMatakuliah').textContent = matakuliah;
-        document.getElementById('deleteModal').classList.remove('hidden');
-        document.getElementById('deleteModal').classList.add('flex');
-    }
-
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').classList.add('hidden');
-        document.getElementById('deleteModal').classList.remove('flex');
-    }
-
-    function exportKRS() {
-        // Implement export functionality
-        alert('Fitur export akan segera tersedia');
-    }
-
-    // Close modals when clicking outside
-    document.getElementById('approveModal').addEventListener('click', function(e) {
+    // Close modal when clicking outside
+    document.getElementById('actionModal').addEventListener('click', function(e) {
         if (e.target === this) {
-            closeApproveModal();
-        }
-    });
-
-    document.getElementById('rejectModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeRejectModal();
-        }
-    });
-
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeDeleteModal();
+            closeActionModal();
         }
     });
     </script>
