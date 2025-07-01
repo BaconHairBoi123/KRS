@@ -208,7 +208,15 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv') {
         font-family: 'Open Sans', sans-serif;
     }
 
-    .sidebar-soft {
+    .absolute.bottom-4.left-4.right-4 {
+        z-index: 1;
+    }
+
+    .nav-link-soft {
+        z-index: 2;
+    }
+
+    l .sidebar-soft {
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(42px);
         border-radius: 1rem;
@@ -315,7 +323,8 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv') {
                         <span>Mata Kuliah</span>
                     </a>
 
-                    <a href="admin-jadwal.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                    <a href="admin-jadwal.php"
+                        class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-calendar w-5 mr-3"></i>
                         <span>Penjadwalan</span>
                     </a>
@@ -342,21 +351,26 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv') {
                 </nav>
 
                 <!-- User Info -->
-                <div class="absolute bottom-4 left-4 right-4">
-                    <div class="bg-white bg-opacity-50 rounded-xl p-3">
+                <div class="bg-white bg-opacity-50 rounded-xl p-3">
+                    <div class="flex items-center justify-between">
+
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
                                 <i class="fas fa-user-shield text-white text-sm"></i>
                             </div>
-                            <div class="flex-1 min-w-0">
+                            <div>
                                 <p class="text-sm font-medium text-gray-800 truncate"><?php echo $_SESSION['nama']; ?>
                                 </p>
                                 <p class="text-xs text-gray-500">Administrator</p>
                             </div>
-                            <a href="logout.php" class="text-red-500 hover:text-red-700">
+                        </div>
+
+                        <div>
+                            <a href="logout.php" class="text-red-500 hover:text-red-700 text-lg">
                                 <i class="fas fa-sign-out-alt"></i>
                             </a>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -395,7 +409,8 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv') {
                                 <option value="mata_kuliah"
                                     <?php echo ($report_type == 'mata_kuliah') ? 'selected' : ''; ?>>Laporan Mata Kuliah
                                 </option>
-                                <option value="mahasiswa" <?php echo ($report_type == 'mahasiswa') ? 'selected' : ''; ?>>
+                                <option value="mahasiswa"
+                                    <?php echo ($report_type == 'mahasiswa') ? 'selected' : ''; ?>>
                                     Laporan Mahasiswa</option>
                             </select>
                         </div>

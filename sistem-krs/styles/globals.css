@@ -83,7 +83,18 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+/* tambahkan CSS berikut */
+.nav-link-soft {
+  position: relative;
+  z-index: 1;
+}
 
+.user-info-box {
+  position: absolute;
+  bottom: 4rem; /* atur jarak antara menu pengaturan dan bar logout */
+  left: 4rem;
+  right: 4rem;
+}
 @layer base {
   * {
     @apply border-border;

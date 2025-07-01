@@ -297,8 +297,7 @@ if ($userRole == 'mahasiswa') {
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Manajemen Pengguna</p>
                     </div>
 
-                    <a href="admin-users.php"
-                        class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
+                    <a href="admin-users.php" class="nav-link-soft flex items-center text-gray-700 hover:text-gray-900">
                         <i class="fas fa-users-cog w-5 mr-3"></i>
                         <span>Kelola Pengguna</span>
                     </a>
@@ -694,7 +693,7 @@ if ($userRole == 'mahasiswa') {
                                     <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Berlangsung</span>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div>
                                     <p class="font-medium text-gray-800">Basis Data</p>
@@ -705,7 +704,7 @@ if ($userRole == 'mahasiswa') {
                                     <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Akan Datang</span>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div>
                                     <p class="font-medium text-gray-800">Algoritma Pemrograman</p>
@@ -717,7 +716,7 @@ if ($userRole == 'mahasiswa') {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mt-4 pt-4 border-t">
                             <a href="dosen-jadwal.php" class="text-blue-600 hover:text-blue-800 font-medium text-sm">
                                 Lihat Semua Jadwal <i class="fas fa-arrow-right ml-1"></i>
@@ -741,7 +740,7 @@ if ($userRole == 'mahasiswa') {
                                 </div>
                                 <span class="text-sm text-green-600 font-medium">Online</span>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                 <div class="flex items-center gap-3">
                                     <div class="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -749,7 +748,7 @@ if ($userRole == 'mahasiswa') {
                                 </div>
                                 <span class="text-sm text-green-600 font-medium">Online</span>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                                 <div class="flex items-center gap-3">
                                     <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
@@ -757,7 +756,7 @@ if ($userRole == 'mahasiswa') {
                                 </div>
                                 <span class="text-sm text-blue-600 font-medium">Aktif</span>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                                 <div class="flex items-center gap-3">
                                     <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
@@ -787,7 +786,7 @@ if ($userRole == 'mahasiswa') {
                                     <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Berlangsung</span>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div>
                                     <p class="font-medium text-gray-800">Basis Data</p>
@@ -799,7 +798,7 @@ if ($userRole == 'mahasiswa') {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mt-4 pt-4 border-t">
                             <a href="jadwal.php" class="text-blue-600 hover:text-blue-800 font-medium text-sm">
                                 Lihat Semua Jadwal <i class="fas fa-arrow-right ml-1"></i>
@@ -821,15 +820,15 @@ if ($userRole == 'mahasiswa') {
                             <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                                     <?php if ($activity['type'] == 'krs' || $activity['type'] == 'user'): ?>
-                                        <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+                                    <i class="fas fa-user-plus text-blue-600 text-sm"></i>
                                     <?php elseif ($activity['type'] == 'absensi'): ?>
-                                        <i class="fas fa-clipboard-check text-blue-600 text-sm"></i>
+                                    <i class="fas fa-clipboard-check text-blue-600 text-sm"></i>
                                     <?php elseif ($activity['type'] == 'nilai'): ?>
-                                        <i class="fas fa-star text-yellow-600 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-600 text-sm"></i>
                                     <?php elseif ($activity['type'] == 'course'): ?>
-                                        <i class="fas fa-book text-green-600 text-sm"></i>
+                                    <i class="fas fa-book text-green-600 text-sm"></i>
                                     <?php else: ?>
-                                        <i class="fas fa-calendar text-purple-600 text-sm"></i>
+                                    <i class="fas fa-calendar text-purple-600 text-sm"></i>
                                     <?php endif; ?>
                                 </div>
                                 <div class="flex-1">
