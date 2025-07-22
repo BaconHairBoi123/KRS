@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2025 at 04:16 AM
+-- Generation Time: Jul 22, 2025 at 10:07 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -201,9 +201,11 @@ INSERT INTO `krs` (`id_krs`, `id_mahasiswa`, `id_kelas`, `tanggal_ambil`, `nilai
 (1, 1, 1, '2024-01-15 10:00:00', NULL, NULL, 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24'),
 (2, 1, 3, '2024-01-15 10:05:00', NULL, NULL, 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24'),
 (3, 1, 6, '2024-01-15 10:10:00', NULL, NULL, 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24'),
-(4, 2, 2, '2024-01-16 09:00:00', NULL, NULL, 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24'),
+(4, 2, 2, '2024-01-16 09:00:00', 89.70, 'A', 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24'),
 (5, 2, 4, '2024-01-16 09:05:00', NULL, NULL, 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24'),
-(6, 3, 1, '2024-01-17 11:00:00', NULL, NULL, 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24');
+(6, 3, 1, '2024-01-17 11:00:00', 71.97, 'B', 'disetujui', '1', '2024/2025', '2025-06-23 14:32:24'),
+(11, 8, 1, '2025-07-22 14:47:50', NULL, NULL, 'aktif', NULL, NULL, '2025-07-22 06:47:50'),
+(12, 8, 13, '2025-07-22 14:47:55', NULL, NULL, 'aktif', NULL, NULL, '2025-07-22 06:47:55');
 
 -- --------------------------------------------------------
 
@@ -242,7 +244,9 @@ INSERT INTO `mahasiswa` (`id_mahasiswa`, `nim`, `nama`, `tanggal_lahir`, `jenis_
 (3, '2022001236', 'Ahmad Rahman', '2004-02-10', 'L', 'Jl. Diponegoro No. 789, Surabaya', '081234567896', 'ahmad.rahman@student.touhou.ac.id', NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2025-06-23 14:32:24', 'Teknik Informatika', 'Informatika', '2024', 1, 1, NULL, 'aktif'),
 (4, '1', 'a', '2025-06-24', 'L', 'a', '08129', 'a@gmail.com', 'uploads/photos/4_1751311510.png', '$2y$10$pOu5ZaTFZaaxY9ofBIlql.uTNeQqUHcKtqG8BP4ByTGIaPwQiz2Yy', '2025-06-23 17:53:44', 'Teknik Informatika', 'Informatika', '2024', 1, 1, NULL, 'aktif'),
 (5, '12', '12', '2025-06-25', 'L', 'b', '087', 'b@gmail.com', NULL, '$2y$10$jHzkt2tcB5Px91hmYzyDOetgim25xgpgaaPPp7J/hxPxS36jf8pQa', '2025-06-25 10:03:48', 'Teknik Informatika', 'Informatika', '2024', 1, 1, NULL, 'aktif'),
-(6, '777', 'wayae', '2025-06-30', 'L', 'erpan', '911', 'f@gmail.com', NULL, '$2y$10$.nRLKPTXWzTDUjWWqz9uG.WHxyv5uUcIKMcSjTzrIMHS2tHBXC/Qm', '2025-06-30 13:45:56', 'Teknik Elektro', 'D2 Instalasi dan Pemeliharaan Kabel Bertegangan Rendah', '2025', 1, 5, NULL, 'aktif');
+(6, '777', 'wayae', '2025-06-30', 'L', 'erpan', '911', 'f@gmail.com', NULL, '$2y$10$.nRLKPTXWzTDUjWWqz9uG.WHxyv5uUcIKMcSjTzrIMHS2tHBXC/Qm', '2025-06-30 13:45:56', 'Teknik Elektro', 'D2 Instalasi dan Pemeliharaan Kabel Bertegangan Rendah', '2025', 1, 5, NULL, 'aktif'),
+(7, '2006', 'naro', '2006-06-04', 'L', 'nusa', '09876542', 'naro2006@gmail.com', NULL, '$2y$10$LfsamRoGlqVDzr2dE8YBxe90FX5kE4skXW6LyH0gaJEdlAFWKQxpO', '2025-07-22 06:26:32', 'Akuntansi', 'D3 Akuntansi', '2025', 1, 1, NULL, 'aktif'),
+(8, '12345678', 'mahasiswa 1', '2025-07-22', 'L', 'test', '0821', 'www@gmail.com', NULL, '$2y$10$TSDvRz9iH/4vhFJP0HCXsui9ZBZJLBZ080xsD3xeLjTOr6gM8010C', '2025-07-22 06:46:06', 'Teknologi Informasi', 'D4 Teknologi Rekayasa Perangkat Lunak', '2025', 1, 1, NULL, 'aktif');
 
 -- --------------------------------------------------------
 
@@ -284,6 +288,38 @@ INSERT INTO `mata_kuliah` (`id_matakuliah`, `kode_matakuliah`, `nama_matakuliah`
 (13, 'TI203', 'Analisis Kebutuhan Perangkat Lunak', 3, 2, 'Mata kuliah yang mempelajari teknik analisis kebutuhan sistem, requirement engineering, dan dokumentasi kebutuhan perangkat lunak', '2025-06-30 17:18:19', NULL, NULL, NULL, 'aktif'),
 (14, 'TI204', 'Basis Data', 4, 2, 'Mata kuliah yang mempelajari konsep basis data relasional, SQL, desain database, dan implementasi sistem basis data', '2025-06-30 17:18:19', NULL, NULL, NULL, 'aktif'),
 (15, 'TI205', 'Pemrograman Berorientasi Objek', 4, 2, 'Mata kuliah yang mempelajari paradigma pemrograman berorientasi objek menggunakan Java atau C++', '2025-06-30 17:18:19', NULL, NULL, NULL, 'aktif');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `nilai`
+--
+
+CREATE TABLE `nilai` (
+  `id_nilai` int(11) NOT NULL,
+  `id_krs` int(11) NOT NULL,
+  `id_mahasiswa` int(11) NOT NULL,
+  `id_kelas` int(11) NOT NULL,
+  `uts` decimal(5,2) DEFAULT NULL,
+  `uas` decimal(5,2) DEFAULT NULL,
+  `tugas` decimal(5,2) DEFAULT NULL,
+  `kuis` decimal(5,2) DEFAULT NULL,
+  `nilai_akhir` decimal(5,2) DEFAULT NULL,
+  `nilai_huruf` varchar(2) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `nilai`
+--
+
+INSERT INTO `nilai` (`id_nilai`, `id_krs`, `id_mahasiswa`, `id_kelas`, `uts`, `uas`, `tugas`, `kuis`, `nilai_akhir`, `nilai_huruf`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, 85.00, 88.00, 90.00, 87.00, 87.40, 'A-', '2025-07-22 05:43:05', '2025-07-22 05:43:05'),
+(2, 2, 1, 3, 78.00, 82.00, 85.00, 80.00, 81.20, 'A-', '2025-07-22 05:43:05', '2025-07-22 05:43:05'),
+(3, 4, 2, 2, 90.00, 90.00, 88.00, 91.00, 89.70, 'A', '2025-07-22 05:43:05', '2025-07-22 06:04:07'),
+(4, 5, 2, 4, 76.00, 79.00, 82.00, 78.00, 78.40, 'B+', '2025-07-22 05:43:05', '2025-07-22 05:43:05'),
+(10, 6, 3, 1, 39.90, 85.00, 87.00, 86.00, 71.97, 'B', '2025-07-22 06:02:19', '2025-07-22 06:02:26');
 
 -- --------------------------------------------------------
 
@@ -407,6 +443,7 @@ ALTER TABLE `kelas`
 ALTER TABLE `krs`
   ADD PRIMARY KEY (`id_krs`),
   ADD UNIQUE KEY `unique_mahasiswa_kelas` (`id_mahasiswa`,`id_kelas`),
+  ADD UNIQUE KEY `unique_mahasiswa_kelas_krs` (`id_mahasiswa`,`id_kelas`),
   ADD KEY `id_kelas` (`id_kelas`);
 
 --
@@ -424,6 +461,16 @@ ALTER TABLE `mahasiswa`
 ALTER TABLE `mata_kuliah`
   ADD PRIMARY KEY (`id_matakuliah`),
   ADD UNIQUE KEY `kode_matakuliah` (`kode_matakuliah`);
+
+--
+-- Indexes for table `nilai`
+--
+ALTER TABLE `nilai`
+  ADD PRIMARY KEY (`id_nilai`),
+  ADD UNIQUE KEY `unique_mahasiswa_kelas` (`id_mahasiswa`,`id_kelas`),
+  ADD KEY `id_krs` (`id_krs`),
+  ADD KEY `id_mahasiswa` (`id_mahasiswa`),
+  ADD KEY `id_kelas` (`id_kelas`);
 
 --
 -- Indexes for table `semester_settings`
@@ -488,19 +535,25 @@ ALTER TABLE `kelas`
 -- AUTO_INCREMENT for table `krs`
 --
 ALTER TABLE `krs`
-  MODIFY `id_krs` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_krs` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `mahasiswa`
 --
 ALTER TABLE `mahasiswa`
-  MODIFY `id_mahasiswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_mahasiswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `mata_kuliah`
 --
 ALTER TABLE `mata_kuliah`
   MODIFY `id_matakuliah` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `nilai`
+--
+ALTER TABLE `nilai`
+  MODIFY `id_nilai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `semester_settings`
@@ -557,6 +610,14 @@ ALTER TABLE `krs`
 --
 ALTER TABLE `mahasiswa`
   ADD CONSTRAINT `mahasiswa_ibfk_1` FOREIGN KEY (`dosen_wali`) REFERENCES `dosen` (`id_dosen`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `nilai`
+--
+ALTER TABLE `nilai`
+  ADD CONSTRAINT `nilai_ibfk_1` FOREIGN KEY (`id_krs`) REFERENCES `krs` (`id_krs`) ON DELETE CASCADE,
+  ADD CONSTRAINT `nilai_ibfk_2` FOREIGN KEY (`id_mahasiswa`) REFERENCES `mahasiswa` (`id_mahasiswa`) ON DELETE CASCADE,
+  ADD CONSTRAINT `nilai_ibfk_3` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
